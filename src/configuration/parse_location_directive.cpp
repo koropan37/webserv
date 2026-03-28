@@ -1,0 +1,114 @@
+#include "parse_location_directive.hpp"
+
+#include "config_utils.hpp"
+#include <algorithm>
+#include <sstream>
+#include "string_utils.hpp"
+
+void parse_location_root_directive(const std::vector<std::string>& tokens,
+                                   size_t& token_index, LocationContext& lc) {
+  set_single_string(tokens, token_index, lc.root, "root");
+}
+
+void parse_upload_store_directive(const std::vector<std::string>& tokens,
+                                  size_t& token_index, LocationContext& lc) {
+  set_single_string(tokens, token_index, lc.upload_store, "upload_store");
+}
+
+void parse_location_index_directive(const std::vector<std::string>& tokens,
+                                    size_t& token_index, LocationContext& lc) {
+  set_vector_string(tokens, token_index, lc.index, "index");
+}
+
+void parse_allow_methods_directive(const std::vector<std::string>& tokens,
+                                   size_t& token_index, LocationContext& lc) {
+  set_vector_string(tokens, token_index, lc.allow_methods, "allow_methods");
+  for (size_t i = 0; i < lc.allow_methods.size(); ++i) {
+    std::transform(lc.allow_methods[i].begin(), lc.allow_methods[i].end(),
+                   lc.allow_methods[i].begin(), ::tolower);
+    std::string method = lc.allow_methods[i];
+    if (method != "get" && method != "post" && method != "delete")
+      error_exit("Invalid method " + method + " in allow_methods");
+  }
+}
+
+void parse_location_client_max_body_size_directive(const std::vector<std::string>& tokens,
+                                   size_t& token_index, LocationContext& lc) {
+  if (token_index >= tokens.size() || tokens[token_index] == ";") {
+    error_exit("client_max_body_size_directive must have at least one value");
+  }
+
+  lc.client_max_body_size = safe_strtol(tokens[token_index++], 0, __LONG_MAX__);
+
+  if (token_index >= tokens.size() || tokens[token_index] != ";") {
+    error_exit("Expected ';' after client_max_body_size values");
+  }
+  token_index++;
+}
+
+void parse_autoindex_directive(const std::vector<std::string>& tokens,
+                               size_t& token_index, LocationContext& lc) {
+  if (token_index >= tokens.size() || tokens[token_index] == ";") {
+    error_exit("autoindex needs a value (on/off)");
+  }
+
+  if (tokens[token_index] != "on" && tokens[token_index] != "off") {
+    error_exit("autoindex must be 'on' or 'off'");
+  }
+  lc.autoindex = (tokens[token_index] == "on");
+  token_index++;
+  if (token_index >= tokens.size() || tokens[token_index++] != ";") {
+    error_exit("Expected ';' after autoindex values");
+  }
+}
+
+void parse_return_directive(const std::vector<std::string>& tokens,
+                            size_t& token_index, LocationContext& lc) {
+  if (token_index >= tokens.size() || tokens[token_index] == ";")
+    error_exit("return directive needs a status code");
+
+  long val = safe_strtol(tokens[token_index++], ConfigLimits::kRedirectCodeMin,
+                         ConfigLimits::kRedirectCodeMax);
+
+  if (val != ConfigLimits::kMovedPermanently && val != ConfigLimits::kFound &&
+      val != ConfigLimits::kSeeOther && val != ConfigLimits::kTemporaryRedirect &&
+      val != ConfigLimits::kPermanentRedirect ) {
+    error_exit("Unsupported redirect status: " + int_to_string(val));
+  }
+  lc.redirect_status_code = static_cast<int>(val);
+
+  if (token_index < tokens.size() && tokens[token_index] != ";") {
+    lc.redirect_url = tokens[token_index];
+    token_index++;
+  }
+
+  if (lc.redirect_url.empty()) {
+    error_exit("Return 3xx directive requires a redirection URL");
+  }
+
+  if (token_index >= tokens.size() || tokens[token_index] != ";") {
+    error_exit("Expected ';' after return values");
+  }
+  token_index++;
+}
+
+void parse_cgi_handlers_directive(const std::vector<std::string>& tokens,
+                            size_t& token_index, LocationContext& lc) {
+  if (token_index >= tokens.size() || tokens[token_index] == ";") {
+    error_exit("Missing CGI extension in cgi_handler");
+  }
+  std::string extension = tokens[token_index++];
+
+  if (token_index >= tokens.size() || tokens[token_index] == ";")
+    error_exit("Missing CGI binary path in cgi_handler");
+  std::string path = tokens[token_index++];
+
+  if (token_index >= tokens.size() || tokens[token_index] != ";")
+    error_exit("Expected ';' after cgi_handler");
+  token_index++;
+
+  CgiConfig handler;
+  handler.extension = extension;
+  handler.binary_path = path;
+  lc.cgi_handlers.push_back(handler);
+}

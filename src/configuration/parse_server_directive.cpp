@@ -1,0 +1,196 @@
+#include <stdexcept>
+#include <string>
+#include <cstdlib>
+
+#include "Config.hpp"
+#include "config_utils.hpp"
+#include "parse_location_directive.hpp"
+#include "string_utils.hpp"
+
+void parse_listen_directive(const std::vector<std::string>& tokens,
+                            size_t& token_index, ServerContext& sc) {
+  if (token_index >= tokens.size() || tokens[token_index] == ";") {
+    error_exit("Empty listen");
+  }
+
+  ListenConfig lc;
+  const std::string val = tokens[token_index++];
+
+  const size_t colon_pos = val.find(':');
+  if (colon_pos != std::string::npos) {
+    // HOST:PORT
+    lc.address = val.substr(0, colon_pos);
+    std::string port_str = val.substr(colon_pos + 1);
+
+    if (lc.address == "localhost") {
+      lc.address = "127.0.0.1";
+    }
+    lc.port = static_cast<int>(safe_strtol(port_str, ConfigLimits::kPortMin,
+                                             ConfigLimits::kPortMax));
+  } else {
+      // PORT only
+      lc.address = "0.0.0.0";
+      lc.port = static_cast<int>(
+          safe_strtol(val, ConfigLimits::kPortMin, ConfigLimits::kPortMax));
+  }
+
+  sc.listens.push_back(lc);
+
+  if (token_index >= tokens.size() || tokens[token_index] != ";") {
+    error_exit("");
+  }
+  token_index++;
+}
+
+void parse_server_name_directive(const std::vector<std::string>& tokens,
+                                 size_t& token_index, ServerContext& sc) {
+  set_vector_string(tokens, token_index, sc.server_names, "server_name");
+}
+
+void parse_client_max_body_size_directive(
+    const std::vector<std::string>& tokens, size_t& token_index,
+    ServerContext& sc) {
+  if (token_index >= tokens.size() || tokens[token_index] == ";") {
+    error_exit("client_max_body_size_directive must have at least one value");
+  }
+
+  sc.client_max_body_size = safe_strtol(tokens[token_index++], 0, __LONG_MAX__);
+
+  if (token_index >= tokens.size() || tokens[token_index] != ";") {
+    error_exit("Expected ';' after client_max_body_size values");
+  }
+  token_index++;
+}
+
+void parse_server_root_directive(const std::vector<std::string>& tokens,
+                                 size_t& token_index, ServerContext& sc) {
+  set_single_string(tokens, token_index, sc.server_root, "server_root");
+}
+
+void parse_server_index_directive(const std::vector<std::string>& tokens,
+                                  size_t& token_index, ServerContext& sc) {
+  set_vector_string(tokens, token_index, sc.server_index, "index");
+}
+
+void parse_error_page_directive(const std::vector<std::string>& tokens,
+                                size_t& token_index, ServerContext& sc) {
+  std::vector<int> codes;
+
+  if (token_index >= tokens.size() || tokens[token_index] == ";")
+    error_exit("error_page directive needs values");
+
+  while (token_index < tokens.size() && is_digits(tokens[token_index])) {
+    long code = safe_strtol(tokens[token_index], 300 ,599);
+    codes.push_back(static_cast<int>(code));
+    token_index++;
+  }
+
+  if (codes.empty()) {
+    error_exit("error_page: at least one status code is required");
+  }
+
+  if (token_index >= tokens.size() || tokens[token_index] == ";") {
+    error_exit("error_page: path is misssing");
+  }
+
+  std::string path = tokens[token_index++];
+
+  for (size_t j = 0; j < codes.size(); ++j) {
+    sc.error_pages[codes[j]] = path;
+  }
+
+  if (token_index >= tokens.size() || tokens[token_index] != ";") {
+    error_exit("Expected ';' after error_page values");
+  }
+  token_index++;
+}
+
+typedef void (*LocationParser)(const std::vector<std::string>&, size_t&,
+                               LocationContext&);
+
+void parse_location_directive(const std::vector<std::string>& tokens,
+                              size_t& token_index, ServerContext& sc) {
+  LocationContext lc;
+  lc.is_exact_match = false;
+
+  if (tokens[token_index] == "=") {
+    lc.is_exact_match = true;
+    token_index++;
+  } else if (tokens[token_index] == "^~") {
+    lc.is_exact_match = false;
+    token_index++;
+  }
+
+  if (token_index >= tokens.size() || tokens[token_index] == "{") {
+    error_exit("Location path is missing");
+  }
+  lc.path = tokens[token_index];
+  token_index++;
+
+  if (token_index >= tokens.size() || tokens[token_index] != "{") {
+    error_exit("Expected '{' after location path");
+  }
+  token_index++;
+
+  static std::map<std::string, LocationParser> parsers;
+  if (parsers.empty()) {
+    parsers["root"] = parse_location_root_directive;
+    parsers["upload_store"] = parse_upload_store_directive;
+    parsers["index"] = parse_location_index_directive;
+
+    parsers["allow_methods"] = parse_allow_methods_directive;
+    parsers["client_max_body_size"] = parse_location_client_max_body_size_directive;
+    parsers["autoindex"] = parse_autoindex_directive;
+    parsers["return"] = parse_return_directive;
+    parsers["cgi_handler"] = parse_cgi_handlers_directive;
+  }
+
+  while (token_index < tokens.size() && tokens[token_index] != "}") {
+    std::string key = tokens[token_index++];
+    if (parsers.count(key)) {
+      parsers[key](tokens, token_index, lc);
+    } else {
+      error_exit("Unknown location directive: " + key);
+    }
+  }
+
+  sc.locations.push_back(lc);
+
+  if (token_index >=  tokens.size() || tokens[token_index] != "}") {
+    error_exit("Expected '}' at the end of location block");
+  }
+  token_index++;
+}
+
+const LocationContext& ServerContext::get_matching_location(
+    const std::string& uri_path) const {
+  const LocationContext* best_match = NULL;
+  size_t longest_len = 0;
+
+  for (size_t i = 0; i < locations.size(); ++i) {
+    const std::string& path = locations[i].path;
+    if (uri_path.find(path) != 0) {
+      continue;
+    }
+    bool is_border = false;
+    if (uri_path.length() == path.length()) {
+      is_border = true;
+    } else if (path[path.length() - 1] == '/') {
+      is_border = true;
+    } else if (uri_path[path.length()] == '/') {
+      is_border = true;
+    }
+    if (is_border) {
+      if (path.length() > longest_len) {
+        longest_len = path.length();
+        best_match = &locations[i];
+      }
+    }
+  }
+  if (best_match == NULL) {
+    static LocationContext empty_lc;
+    empty_lc.path = "__NOT_FOUND__";
+    return empty_lc;
+  }
+  return *best_match;
+}
