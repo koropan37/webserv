@@ -1,9 +1,9 @@
 #ifndef INCLUDE_REQUESTPROCESSOR_HPP_
 #define INCLUDE_REQUESTPROCESSOR_HPP_
 
-#include "Parser.hpp"
-#include "Response.hpp"
-#include "Config.hpp"
+#include "../include/Parser.hpp"
+#include "../include/Response.hpp"
+#include "../include/Config.hpp"
 
 #include <cerrno>
 #include <iostream>

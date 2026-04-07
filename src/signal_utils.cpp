@@ -3,7 +3,7 @@
 
 #include <csignal>
 
-#include "config_utils.hpp"
+#include "../include/config_utils.hpp"
 
 extern volatile sig_atomic_t g_running;
 

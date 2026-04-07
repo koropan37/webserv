@@ -1,4 +1,4 @@
-#include "ClientHandler.hpp"
+#include "../include/ClientHandler.hpp"
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -9,15 +9,14 @@
 #include <iostream>
 #include <ctime>
 
-#include "CgiHandler.hpp"
-#include "CgiInputHandler.hpp"
-#include "CgiResponseHandler.hpp"
-#include "Config.hpp"
-#include "MonitoredFdHandler.hpp"
-#include "Parser.hpp"
-#include "RequestProcessor.hpp"
-#include "Server.hpp"
-#include "pollfd_utils.hpp"
+#include "../include/CgiHandler.hpp"
+#include "../include/CgiInputHandler.hpp"
+#include "../include/CgiResponseHandler.hpp"
+#include "../include/Config.hpp"
+#include "../include/MonitoredFdHandler.hpp"
+#include "../include/Parser.hpp"
+#include "../include/RequestProcessor.hpp"
+#include "../include/Server.hpp"
 
 ClientHandler::ClientHandler(int client_fd, const std::string& addr,
                              const std::string& port,

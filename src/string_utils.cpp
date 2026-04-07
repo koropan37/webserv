@@ -4,7 +4,6 @@
 #include <string>
 #include <cstdlib>
 #include <climits>
-#include "Parser.hpp"
 
 std::string to_lower(std::string s) {
   for (size_t i = 0; i < s.length(); ++i) {

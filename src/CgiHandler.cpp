@@ -1,5 +1,5 @@
-#include "CgiHandler.hpp"
-#include "MetaVariables.hpp"
+#include "../include/CgiHandler.hpp"
+#include "../include/MetaVariables.hpp"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -9,13 +9,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <sstream>
-#include <fstream>
-
-#include "Server.hpp"
-#include "CgiResponseHandler.hpp"
-#include "pollfd_utils.hpp"
-#include "string_utils.hpp"
 
 CgiHandler::CgiHandler(const Request& request,
                        const std::string& query_string,
@@ -81,8 +74,9 @@ static bool is_executable_regular_file(const std::string& path) {
 static CgiHandler::ExecArgv build_exec_argv(const std::string& script_name,
                                             const std::string& cgi_path) {
   CgiHandler::ExecArgv execargv;
-  if (!is_executable_regular_file(script_name)) 
-  return execargv;
+  if (!is_executable_regular_file(script_name)) {
+    return execargv;
+  }
 
   execargv.file = cgi_path;
   execargv.argv.push_back(execargv.file);

@@ -1,13 +1,12 @@
-#include "Response.hpp"
+#include "../include/Response.hpp"
 
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <unistd.h>
 
-#include "Parser.hpp"
-#include "string_utils.hpp"
-#include "Config.hpp"
+#include "../include/Parser.hpp"
+#include "../include/string_utils.hpp"
 
 namespace http_error_constants {
   const char* kErrorHtmlStart = "<html><head><title>";

@@ -1,9 +1,9 @@
 // #include <gtest/gtest.h>
 #include <iostream>
 #include <cassert>
-#include "RequestProcessor.hpp"
-#include "Parser.hpp"
-#include "Config.hpp"
+#include "../include/RequestProcessor.hpp"
+#include "../include/Parser.hpp"
+#include "../include/Config.hpp"
 
 // int main(int argc, char** argv) {
 //   ::testing::InitGoogleTest(&argc, argv);

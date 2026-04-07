@@ -1,4 +1,4 @@
-#include "AcceptHandler.hpp"
+#include "../include/AcceptHandler.hpp"
 
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -9,8 +9,8 @@
 #include <cstdio>
 #include <string>
 
-#include "MonitoredFdHandler.hpp"
-#include "Server.hpp"
+#include "../include/MonitoredFdHandler.hpp"
+#include "../include/Server.hpp"
 
 namespace {
 std::string translate_newtwork_addr(const struct sockaddr_in& network_addr) {

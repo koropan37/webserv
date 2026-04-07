@@ -1,9 +1,9 @@
 #ifndef INCLUDE_CGIRESPONSEHANDLER_HPP_
 #define INCLUDE_CGIRESPONSEHANDLER_HPP_
 
-#include "ClientHandler.hpp"
-#include "MonitoredFdHandler.hpp"
-#include "Config.hpp"
+#include "../include/ClientHandler.hpp"
+#include "../include/MonitoredFdHandler.hpp"
+#include "../include/Config.hpp"
 #include <map>
 #include <string>
 #include <sys/types.h>

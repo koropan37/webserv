@@ -1,4 +1,4 @@
-#include "Parser.hpp"
+#include "../include/Parser.hpp"
 
 #include <cstddef>
 #include <cstdlib>
@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "string_utils.hpp"
+#include "../include/string_utils.hpp"
 
 bool uses_obsolete_line_folding(const std::string& request,
                                 std::size_t crlf_pos) {

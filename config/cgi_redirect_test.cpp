@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "CgiResponseHandler.hpp"
+#include "../include/CgiResponseHandler.hpp"
 
 class CgiRedirectTest : public ::testing::Test {
 protected:

@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "Config.hpp"
+#include "../include/Config.hpp"
 
 typedef void (*ServerParser)(const std::vector<std::string>&, size_t&,
                              ServerContext&);

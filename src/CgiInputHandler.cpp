@@ -1,11 +1,10 @@
-#include "CgiInputHandler.hpp"
-#include "Server.hpp"
+#include "../include/CgiInputHandler.hpp"
+#include "../include/Server.hpp"
 
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
 #include <ctime>
-#include <signal.h>
 #include <sys/wait.h>
 
 static int64_t now_time_cgi_in() {

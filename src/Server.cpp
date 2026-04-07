@@ -1,13 +1,11 @@
-#include "Server.hpp"
+#include "../include/Server.hpp"
 
 #include <fcntl.h>
 #include <poll.h>
 #include <signal.h>
-#include <stdint.h>
 #include <sys/poll.h>
 #include <unistd.h>
 
-#include <climits>
 #include <cstddef>
 #include <cstring>
 #include <ctime>
@@ -17,14 +15,14 @@
 #include <string>
 #include <utility>
 
-#include "AcceptHandler.hpp"
-#include "CgiInputHandler.hpp"
-#include "ClientHandler.hpp"
-#include "ListenSocket.hpp"
-#include "MonitoredFdHandler.hpp"
-#include "SystemError.hpp"
-#include "pollfd_utils.hpp"
-#include "string_utils.hpp"
+#include "../include/AcceptHandler.hpp"
+#include "../include/CgiInputHandler.hpp"
+#include "../include/ClientHandler.hpp"
+#include "../include/ListenSocket.hpp"
+#include "../include/MonitoredFdHandler.hpp"
+#include "../include/SystemError.hpp"
+#include "../include/pollfd_utils.hpp"
+#include "../include/string_utils.hpp"
 
 volatile sig_atomic_t g_running = true;
 

@@ -1,4 +1,4 @@
-#include "Config.hpp"
+#include "../include/Config.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -6,8 +6,8 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "config_utils.hpp"
-#include "parse_server_directive.hpp"
+#include "../include/config_utils.hpp"
+#include "../include/parse_server_directive.hpp"
 
 std::string Config::read_file(const std::string& filepath) {
   std::ifstream ifs(filepath.c_str());

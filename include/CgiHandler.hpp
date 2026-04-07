@@ -4,8 +4,7 @@
 #include <sys/types.h>
 #include <string>
 #include <vector>
-
-#include "Parser.hpp"
+#include "../include/Parser.hpp"
 
 class CgiHandler {
  public:

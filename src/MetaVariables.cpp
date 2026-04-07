@@ -1,6 +1,5 @@
-#include "MetaVariables.hpp"
+#include "../include/MetaVariables.hpp"
 
-#include <algorithm>
 #include <cctype>
 #include <cstring>
 #include <sstream>

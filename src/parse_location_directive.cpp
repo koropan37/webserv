@@ -1,9 +1,8 @@
-#include "parse_location_directive.hpp"
+#include "../include/parse_location_directive.hpp"
 
-#include "config_utils.hpp"
+#include "../include/config_utils.hpp"
 #include <algorithm>
-#include <sstream>
-#include "string_utils.hpp"
+#include "../include/string_utils.hpp"
 
 void parse_location_root_directive(const std::vector<std::string>& tokens,
                                    size_t& token_index, LocationContext& lc) {

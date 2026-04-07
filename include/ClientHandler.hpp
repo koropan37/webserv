@@ -6,10 +6,10 @@
 #include <cstddef>
 #include <string>
 
-#include "Config.hpp"
-#include "MonitoredFdHandler.hpp"
-#include "Parser.hpp"
-#include "Response.hpp"
+#include "../include/Config.hpp"
+#include "../include/MonitoredFdHandler.hpp"
+#include "../include/Parser.hpp"
+#include "../include/Response.hpp"
 
 class Server;
 

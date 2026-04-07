@@ -5,9 +5,9 @@
 #include <iostream>
 #include <vector>
 
-#include "Server.hpp"
-#include "config_utils.hpp"
-#include "signal_utils.hpp"
+#include "../include/Server.hpp"
+#include "../include/config_utils.hpp"
+#include "../include/signal_utils.hpp"
 
 int main(int argc, char* argv[]) {
   std::string config_path;

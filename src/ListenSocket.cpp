@@ -1,4 +1,4 @@
-#include "ListenSocket.hpp"
+#include "../include/ListenSocket.hpp"
 
 #include <fcntl.h>
 #include <netdb.h>
@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "SystemError.hpp"
+#include "../include/SystemError.hpp"
 
 ListenSocket::ListenSocket(const std::string& addr, const std::string& port,
                            int maxpending)

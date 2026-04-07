@@ -1,12 +1,8 @@
-#include "TimeoutManager.hpp"
-#include "MonitoredFdHandler.hpp"
-#include "Server.hpp"
-#include "SystemError.hpp"
+#include "../include/TimeoutManager.hpp"
+#include "../include/MonitoredFdHandler.hpp"
 #include <ctime>
-#include <algorithm>
 #include <poll.h>
 #include <vector>
-#include <iostream>
 
 TimeoutManager::TimeoutManager() {}
 TimeoutManager::~TimeoutManager() {}

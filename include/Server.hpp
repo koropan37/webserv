@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include "Config.hpp"
-#include "ListenSocket.hpp"
-#include "MonitoredFdHandler.hpp"
+#include "../include/Config.hpp"
+#include "../include/ListenSocket.hpp"
+#include "../include/MonitoredFdHandler.hpp"
 
 #include "TimeoutManager.hpp"
 

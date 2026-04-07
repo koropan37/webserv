@@ -1,5 +1,5 @@
-#include "CgiResponseHandler.hpp"
-#include "Response.hpp"
+#include "../include/CgiResponseHandler.hpp"
+#include "../include/Response.hpp"
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -12,10 +12,10 @@
 #include <cctype>
 #include <ctime>
 
-#include "Server.hpp"
-#include "ClientHandler.hpp"
-#include "RequestProcessor.hpp"
-#include "string_utils.hpp"
+#include "../include/Server.hpp"
+#include "../include/ClientHandler.hpp"
+#include "../include/RequestProcessor.hpp"
+#include "../include/string_utils.hpp"
 
 namespace {
 static int64_t now_time_cgi_out() {

@@ -1,8 +1,7 @@
-#include "RequestProcessor.hpp"
+#include "../include/RequestProcessor.hpp"
 
-#include "Parser.hpp"
-#include "Response.hpp"
-#include "string_utils.hpp"
+#include "../include/Parser.hpp"
+#include "../include/Response.hpp"
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
